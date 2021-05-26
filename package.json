@@ -1,0 +1,27 @@
+{
+  "name": "advance_node_auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\" "
+  },
+  "keywords": [],
+  "author": "Emman",
+  "license": "ISC",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.5.1",
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^6.1.0",
+    "config": "^3.3.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.9",
+    "nodemailer": "^4.7.0",
+    "nodemon": "^2.0.7"
+  }
+}
