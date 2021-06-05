@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require('../../models/User');
 const ErrorResponse = require('../../utils/ErrorResponse');
 const sendEmail = require('../../utils/sendEmail');
+const crypto = require('crypto');
+const auth = require('../../middleware/auth');
 
 router.post('/register', async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -125,7 +127,7 @@ router.post('/forgotpassword', async (req, res, next) => {
       const resetToken = user.getResetPasswordToken();
 
       user.save();
-      const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;
+      const resetUrl = `http://localhost:3000/resetpassword/${resetToken}`;
 
       const message = `
           <h1>You have requested a password reset</h1>
@@ -156,8 +158,33 @@ router.post('/forgotpassword', async (req, res, next) => {
     });
 });
 
-router.put('/resetpassword:resetToken', (req, res, next) => {
-  res.send('Reset password route');
+router.put('/resetpassword/:resetToken', async (req, res, next) => {
+  const resetPasswordToken = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
+
+  User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  }).then(user => {
+    if(!user) return res.status(400).json({
+      success: false,
+      error: 'Invalid reset token!'
+    });
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    user.save().then(() =>{
+      return res.status(201).json({
+        success: true,
+        data: 'Password reset success! please login with your new password!',
+      });
+    }).catch(err => {
+      return next(err);
+    })
+  }).catch(err => {
+    return next(err);
+  })
+
 });
 
 const sendToken = (user, statusCode, res) => {
@@ -168,5 +195,14 @@ const sendToken = (user, statusCode, res) => {
     token,
   });
 };
+
+//get all users
+
+router.get('/user', auth, (req, res) => {
+    User.findById(req.user.id)
+      .then(user => {
+        res.json({user});
+      })
+});
 
 module.exports = router;
