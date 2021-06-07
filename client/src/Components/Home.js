@@ -34,7 +34,7 @@ const Home = () => {
                 <Typography gutterButtom align='center' variant='h4'>
                     Welcome Home!
                 </Typography>
-                <Typography align='center' variant='h3'>
+                <Typography align='center' variant='h6'>
                 {user ? user.username : ''}
                 </Typography>
                 <Button
