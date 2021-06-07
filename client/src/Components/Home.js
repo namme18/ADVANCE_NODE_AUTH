@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 
 const Home = () => {
     const classes = useStyles();
-    const history = useHistory();
+    //const history = useHistory();
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.authReducer);
     const onSubmit = e => {
@@ -35,7 +35,7 @@ const Home = () => {
                     Welcome Home!
                 </Typography>
                 <Typography align='center' variant='h3'>
-                {user.username}
+                {user ? user.username : ''}
                 </Typography>
                 <Button
                     className={classes.field}
